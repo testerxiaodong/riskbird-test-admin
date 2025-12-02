@@ -41,3 +41,6 @@ web/pnpm-lock.yaml
 *.db
 *.sqlite
 *.sqlite3
+
+# Ignore server config
+server/config.yaml
