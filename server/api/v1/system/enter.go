@@ -24,6 +24,8 @@ type ApiGroup struct {
 	SysParamsApi
 	SysVersionApi
 	SysErrorApi
+	UserBalanceApi
+	UserPointApi
 }
 
 var (

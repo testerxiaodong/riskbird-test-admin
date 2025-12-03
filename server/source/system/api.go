@@ -57,6 +57,8 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "系统用户", Method: "POST", Path: "/user/setUserAuthority", Description: "修改用户角色(必选)"},
 		{ApiGroup: "系统用户", Method: "POST", Path: "/user/resetPassword", Description: "重置用户密码"},
 		{ApiGroup: "系统用户", Method: "PUT", Path: "/user/setSelfSetting", Description: "用户界面配置"},
+		{ApiGroup: "RiskBird用户", Method: "POST", Path: "/riskbird/user/modifyUserBalance", Description: "修改用户余额"},
+		{ApiGroup: "RiskBird用户", Method: "POST", Path: "/riskbird/user/modifyUserPoint", Description: "修改用户积分"},
 
 		{ApiGroup: "api", Method: "POST", Path: "/api/createApi", Description: "创建api"},
 		{ApiGroup: "api", Method: "POST", Path: "/api/deleteApi", Description: "删除Api"},

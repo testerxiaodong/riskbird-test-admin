@@ -5,6 +5,8 @@ type ServiceGroup struct {
 	ApiService
 	MenuService
 	UserService
+	UserBalanceService
+	UserPointService
 	CasbinService
 	InitDBService
 	AutoCodeService

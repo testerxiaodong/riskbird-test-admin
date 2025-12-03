@@ -45,4 +45,6 @@ var (
 	exportTemplateApi   = api.ApiGroupApp.SystemApiGroup.SysExportTemplateApi
 	sysVersionApi       = api.ApiGroupApp.SystemApiGroup.SysVersionApi
 	sysErrorApi         = api.ApiGroupApp.SystemApiGroup.SysErrorApi
+	userBalanceApi      = api.ApiGroupApp.SystemApiGroup.UserBalanceApi
+	userPointApi        = api.ApiGroupApp.SystemApiGroup.UserPointApi
 )

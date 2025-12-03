@@ -152,7 +152,7 @@ service.interceptors.response.use(
         message: response.data.msg || decodeURI(response.headers.msg),
         type: 'error'
       })
-      return response.data.msg ? response.data : response
+      return Promise.reject(response.data)
     }
   },
   (error) => {
