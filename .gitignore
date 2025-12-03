@@ -44,3 +44,4 @@ web/pnpm-lock.yaml
 
 # Ignore server config
 server/config.yaml
+server/app-linux
