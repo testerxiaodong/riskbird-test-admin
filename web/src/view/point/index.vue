@@ -1,55 +1,79 @@
 <template>
-  <div class="container">
-    <el-card class="form-card">
+  <div>
+    <div class="gva-table-box">
+      <div class="gva-btn-list">
+        <el-button type="primary" icon="plus" @click="openPointDialog">
+          修改用户积分
+        </el-button>
+      </div>
+    </div>
+
+    <!-- 修改积分抽屉 -->
+    <el-drawer
+      v-model="pointDialogVisible"
+      :size="appStore.drawerSize"
+      :show-close="false"
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+    >
       <template #header>
-        <div style="text-align: center">
-          <h2>用户积分修改</h2>
+        <div class="flex justify-between items-center">
+          <span class="text-lg">修改用户积分</span>
+          <div>
+            <el-button @click="closePointDialog">取 消</el-button>
+            <el-button type="primary" @click="submitPoint" :loading="loading">确 定</el-button>
+          </div>
         </div>
       </template>
 
       <el-form
-        ref="formRef"
-        :model="formData"
-        :rules="rules"
-        label-width="80px"
-        style="max-width: 450px; margin: 0 auto"
+        ref="pointFormRef"
+        :model="pointForm"
+        :rules="pointRules"
+        label-width="100px"
       >
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="formData.phone" placeholder="请输入用户手机号" />
+        <el-form-item label="手机号" prop="phone" required>
+          <el-input v-model="pointForm.phone" placeholder="请输入用户手机号" />
         </el-form-item>
 
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="formData.password" type="password" show-password placeholder="请输入用户密码" />
+        <el-form-item label="密码" prop="password" required>
+          <el-input 
+            v-model="pointForm.password" 
+            type="password" 
+            show-password 
+            placeholder="请输入用户密码" 
+          />
         </el-form-item>
 
-        <el-form-item label="积分" prop="pointAmount">
-          <el-input v-model="formData.pointAmount" placeholder="请输入修改后的积分数" />
+        <el-form-item label="修改积分" prop="pointAmount" required>
+          <el-input 
+            v-model="pointForm.pointAmount" 
+            placeholder="请输入修改后的积分数（必须是5的倍数）" 
+          />
         </el-form-item>
-
-        <div style="text-align: center">
-          <el-button type="primary" @click="submitForm" :loading="loading">提交</el-button>
-          <el-button @click="resetForm">重置</el-button>
-        </div>
       </el-form>
-    </el-card>
+    </el-drawer>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useAppStore } from '@/pinia'
 import { modifyUserPoint } from '@/api/userPoint'
 
-const formRef = ref()
+const appStore = useAppStore()
+const pointDialogVisible = ref(false)
+const pointFormRef = ref()
 const loading = ref(false)
 
-const formData = reactive({
+const pointForm = reactive({
   phone: '',
   password: '',
   pointAmount: ''
 })
 
-// 手机号验证规则
+// 手机号验证
 const phoneValidator = (rule, value, callback) => {
   if (!value) {
     callback(new Error('用户手机号不能为空'))
@@ -60,7 +84,7 @@ const phoneValidator = (rule, value, callback) => {
   }
 }
 
-// 密码验证规则
+// 密码验证
 const passwordValidator = (rule, value, callback) => {
   if (!value) {
     callback(new Error('用户密码不能为空'))
@@ -69,7 +93,7 @@ const passwordValidator = (rule, value, callback) => {
   }
 }
 
-// 积分验证规则
+// 积分验证
 const pointValidator = (rule, value, callback) => {
   if (value === '' || value === null || value === undefined) {
     callback(new Error('积分不能为空'))
@@ -86,93 +110,46 @@ const pointValidator = (rule, value, callback) => {
   }
 }
 
-// 表单验证规则
-const rules = {
+const pointRules = {
   phone: [{ validator: phoneValidator, trigger: 'blur' }],
   password: [{ validator: passwordValidator, trigger: 'blur' }],
   pointAmount: [{ validator: pointValidator, trigger: 'blur' }]
 }
 
-// 提交表单
-const submitForm = async () => {
+// 打开积分修改对话框
+const openPointDialog = () => {
+  pointForm.phone = ''
+  pointForm.password = ''
+  pointForm.pointAmount = ''
+  pointDialogVisible.value = true
+}
+
+// 关闭积分修改对话框
+const closePointDialog = () => {
+  pointFormRef.value?.clearValidate()
+  pointDialogVisible.value = false
+}
+
+// 提交积分修改
+const submitPoint = async () => {
   try {
-    await formRef.value.validate()
+    await pointFormRef.value.validate()
     loading.value = true
 
-    // 调用API接口
     await modifyUserPoint({
-      phone: formData.phone,
-      password: formData.password,
-      pointAmount: Number(formData.pointAmount)
+      phone: pointForm.phone,
+      password: pointForm.password,
+      pointAmount: Number(pointForm.pointAmount)
     })
 
     loading.value = false
-    ElMessage.success('用户积分修改成功！')
-    resetForm()
+    ElMessage.success('用户积分修改成功')
+    pointDialogVisible.value = false
   } catch (error) {
     loading.value = false
-    // 错误信息已由拦截器显示，这里不需要再显示
   }
-}
-
-// 重置表单
-const resetForm = () => {
-  formRef.value?.resetFields()
-  formData.phone = ''
-  formData.password = ''
-  formData.pointAmount = ''
 }
 </script>
 
-<style scoped>
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  background: #f5f7fa;
-  padding: 60px 20px 20px;
-  overflow-y: auto;
-}
-
-.form-card {
-  width: 100%;
-  max-width: 380px;
-  flex-shrink: 0;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-:deep(.el-card) {
-  border-radius: 12px;
-}
-
-:deep(.el-card__header) {
-  padding: 20px;
-  border-bottom: 1px solid #ebeef5;
-  border-radius: 12px 12px 0 0;
-}
-
-:deep(.el-card__body) {
-  border-radius: 0 0 12px 12px;
-}
-
-h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-}
-
-:deep(.el-input__wrapper) {
-  border-radius: 6px;
-}
-
-:deep(.el-input) {
-  border-radius: 6px;
-}
-
-:deep(.el-button) {
-  border-radius: 6px;
-}
+<style lang="scss">
 </style>

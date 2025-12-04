@@ -23,11 +23,11 @@ func (s *UserBalanceService) ModifyUserBalance(req systemReq.ModifyUserBalance) 
 
 	// 连接 RiskBird 数据库
 	riskBirdDB, err := request.NewRiskBirdDB(request.RiskBirdDBConfig{
-		Host:     "106.75.65.54",
-		Port:     7749,
-		User:     "zengdong",
-		Password: "Zd@2025",
-		Database: "riskbirdmdev",
+		Host:     global.GVA_CONFIG.RiskBird.DB.Host,
+		Port:     global.GVA_CONFIG.RiskBird.DB.Port,
+		User:     global.GVA_CONFIG.RiskBird.DB.User,
+		Password: global.GVA_CONFIG.RiskBird.DB.Password,
+		Database: global.GVA_CONFIG.RiskBird.DB.Database,
 	})
 	if err != nil {
 		global.GVA_LOG.Error("连接RiskBird数据库失败", zap.Error(err))
@@ -36,7 +36,7 @@ func (s *UserBalanceService) ModifyUserBalance(req systemReq.ModifyUserBalance) 
 	defer riskBirdDB.Close()
 
 	// 创建 RiskBird API 客户端
-	riskBirdClient := request.NewRiskBirdAPIClient("http://test-assets.riskbird.com/test-qbb-api")
+	riskBirdClient := request.NewRiskBirdAPIClient(global.GVA_CONFIG.RiskBird.API.BaseUrl)
 
 	// 1. 用户登录
 	loginResp, err := riskBirdClient.Login(req.Phone, req.Password)

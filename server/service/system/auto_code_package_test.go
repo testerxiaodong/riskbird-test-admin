@@ -95,8 +95,8 @@ func Test_autoCodePackage_templates(t *testing.T) {
 			}
 			for key, value := range gotCode {
 				t.Logf("\n")
-				t.Logf(key)
-				t.Logf(value)
+				t.Logf("%s", key)
+				t.Logf("%s", value)
 				t.Logf("\n")
 			}
 			t.Log(gotCreates)
